@@ -50,10 +50,20 @@ public class ManagementView extends Menu {
         String sClassID = AppTools.getString("ClassID").toUpperCase();
         try {
             Student s = new Student(sName, sClassID, sDob);
-            Classroom cr = new Classroom();
-            cr.addStd(s);
-            school.addClassroom(cr);
-            System.out.println(s);
+            Classroom cr = school.findClass(s.getClassID());
+            if (cr == null) {
+//                Tao class moi
+                cr = new Classroom(s.getClassID());
+                cr.addStd(s);
+                school.addClasses(cr);
+//                Debug
+            } else {
+//                Them vao class dang co (cr != null)
+//                Update = cach xoa array cu va them array moi
+                cr.addStd(s, school);
+            }
+            school.showClasses();
+
         } catch (Exception e) {
             System.out.println("Tao that bai!\nError: " + e);
         }
