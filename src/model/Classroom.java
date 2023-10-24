@@ -5,6 +5,8 @@
 package model;
 
 import java.util.ArrayList;
+import view.ManageView;
+import static view.ManageView.school;
 
 /**
  *
@@ -13,8 +15,17 @@ import java.util.ArrayList;
 public class Classroom {
 
     private ArrayList<Student> sList = new ArrayList();
+    private ArrayList<Lecturer> lList = new ArrayList();
     private String classID;
 
+    public ArrayList<Lecturer> getlList() {
+        return lList;
+    }
+
+    public void setlList(ArrayList<Lecturer> lList) {
+        this.lList = lList;
+    }
+    
     public ArrayList<Student> getsList() {
         return sList;
     }
@@ -37,29 +48,39 @@ public class Classroom {
     public Classroom(String classID) {
         this.classID = classID;
     }
-    
-    /**
-     * Dung trong TH lop chua ton tai (tao moi)
-     * @param s 
-     */
-    public void addStd(Student s) {
-        this.sList.add(s);
-    }
-/**
- * Ham nay dung trong truong hop lop da ton tai
- * @param s
- * @param school 
- */
-    public void addStd(Student s, School school) {
-        Classroom cr = school.findClass(s.getClassID());
-        cr.sList.add(s);
-    }
 
+    public static void addStd(String sName, String sClassID, String sDob) {
+
+        try {
+            Student s = new Student(sName, sClassID, sDob);
+            Classroom cr = ManageView.school.searchClass(p -> p.classID.equals(sClassID));
+            if (cr == null) {
+                Classroom n = new Classroom(s.getClassID());
+                n.sList.add(s);
+                ManageView.school.addClasses(n);
+            } else {
+                cr.sList.add(s);
+            }
+        } catch (Exception e) {
+            System.out.println("Tao that bai!\nWrong birthday!");
+        }
+    }
+    
+    
+    public void addLec(Lecturer l) {
+        lList.add(l);
+    }
+    
     public void display() {
-        System.out.println("Student of class " + classID);
+        System.out.println("Teach by Lecturers: ");
+        for (Lecturer l : lList) {
+            System.out.println(l);
+        }
+        System.out.println("Student of class " + this.classID);
         for (Student student : sList) {
             System.out.println(student);
         }
+        System.out.println("-----------------------------");
     }
 
 }

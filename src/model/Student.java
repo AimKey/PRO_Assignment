@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author phamm
  */
-public class Student extends Person {
+public class Student {
     private String name, classID;
     private LocalDate dob;
 
@@ -48,10 +48,7 @@ public class Student extends Person {
         this.dob = LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
     }
-    
-    public void add(Student s) {
-        System.out.println("Adding");
-    }
+   
     
     @Override
     public String toString() {

@@ -1,20 +1,21 @@
 package view;
 
+import java.util.ArrayList;
 import model.Classroom;
+import model.Lecturer;
 import model.School;
-import model.Student;
 
-public class ManagementView extends Menu {
+public class ManageView extends Menu {
 
-    School school = new School();
+    public static School school = new School();
 
     public static void main(String[] args) {
-        ManagementView menu = new ManagementView();
+        ManageView menu = new ManageView();
         menu.run();
     }
     static String[] mc = {"Add Student", "Add course", "Add lecturer", "Enroll course", "Timetable", "Search class", "Exit"};
 
-    public ManagementView() {
+    public ManageView() {
         super(mc, "Student Management");
     }
 //--------------------------------------------
@@ -27,8 +28,10 @@ public class ManagementView extends Menu {
                 addStudent();
                 break;
             case 2:
+                addCourse();
                 break;
             case 3:
+                addLecturer();
                 break;
             case 4:
                 break;
@@ -39,33 +42,63 @@ public class ManagementView extends Menu {
             case 7:
                 System.out.println("See you next time!");
                 System.exit(0);
+            default:
+                System.out.println("See you next time");
+                System.exit(0);
         }
     }
 
     public void addStudent() {
-//        Date of birth must in this format: dd/MM/yyyy
-        System.out.println("Student info: ");
         String sName = AppTools.getString("Name");
         String sDob = AppTools.getString("Dob (format: dd/MM/yyyy)");
         String sClassID = AppTools.getString("ClassID").toUpperCase();
-        try {
-            Student s = new Student(sName, sClassID, sDob);
-            Classroom cr = school.findClass(s.getClassID());
-            if (cr == null) {
-//                Tao class moi
-                cr = new Classroom(s.getClassID());
-                cr.addStd(s);
-                school.addClasses(cr);
-//                Debug
-            } else {
-//                Them vao class dang co (cr != null)
-//                Update = cach xoa array cu va them array moi
-                cr.addStd(s, school);
-            }
-            school.showClasses();
+        Classroom.addStd(sName, sClassID, sDob);
+//        Debug
+        school.showClasses();
+    }
 
-        } catch (Exception e) {
-            System.out.println("Tao that bai!\nError: " + e);
-        }
+    public void addCourse() {
+        String course = AppTools.getString("Course name");
+        school.addCourse(course);
+//        Debug
+        school.showCourses();
+    }
+
+    public void addLecturer() {
+        String lName = AppTools.getString("Lecturer name");
+        ArrayList<String> clr = new ArrayList(school.getClassIDs());
+        Menu classSelect = new Menu(clr, "Available classes") {
+            @Override
+            public void execute(int classChoice) {
+                //            Chon lop
+                Classroom cr = school.getClassrooms().get(classChoice - 1);
+                ArrayList<String> courses = school.getCourses();
+
+                Menu coursesSelect = new Menu(courses, "Available courses") {
+
+                    public void run() {
+                        while (true) {
+                            int n = getSelected();
+                            if (n > this.getmChon().size() || n <= 0) {break;}
+                            if (execute(n, 0) == 0) {break;}
+                        }
+                    }
+                    @Override
+                    public  void execute(int n) {};
+
+                    public int execute(int courseChoice, int temp) {
+                        String cChoice = school.getCourses().get(courseChoice - 1);
+                        Lecturer l = new Lecturer(lName, cChoice, cr.getClassID());
+                        cr.addLec(l);
+                        System.out.println("Lecturer added: " + l);
+                        return 0;
+                    }
+                };
+                coursesSelect.run();
+                clr.remove(cr.getClassID());
+            }
+        };
+        classSelect.run();
+        school.showClasses();
     }
 }
