@@ -25,7 +25,7 @@ public class Classroom {
     public void setlList(ArrayList<Lecturer> lList) {
         this.lList = lList;
     }
-    
+
     public ArrayList<Student> getsList() {
         return sList;
     }
@@ -49,28 +49,33 @@ public class Classroom {
         this.classID = classID;
     }
 
-    public static void addStd(String sName, String sClassID, String sDob) {
-
-        try {
-            Student s = new Student(sName, sClassID, sDob);
-            Classroom cr = ManageView.school.searchClass(p -> p.classID.equals(sClassID));
-            if (cr == null) {
-                Classroom n = new Classroom(s.getClassID());
-                n.sList.add(s);
-                ManageView.school.addClasses(n);
-            } else {
-                cr.sList.add(s);
+    public static void addStd(String sName, String sClassID1, String sDob) {
+        String sClassID = sClassID1.replaceAll("\\s+", "");
+        if (!sName.matches("^[A-Za-z ]+$")) {
+            System.out.println("Name is not allowed to have numbers or special characters !");
+        } else {
+            sDob = Student.formatDate(sDob);
+            try {
+                Student s = new Student(sName, sClassID, sDob);
+                Classroom cr = ManageView.school.searchClass(p -> p.classID.equals(sClassID));
+                if (cr == null) {
+                    Classroom n = new Classroom(s.getClassID());
+                    n.sList.add(s);
+                    ManageView.school.addClasses(n);
+                } else {
+                    cr.sList.add(s);
+                }
+            } catch (Exception e) {
+                System.out.println("Wrong birthday!");
             }
-        } catch (Exception e) {
-            System.out.println("Tao that bai!\nWrong birthday!");
         }
+
     }
-    
-    
+
     public void addLec(Lecturer l) {
         lList.add(l);
     }
-    
+
     public void display() {
         System.out.println("Teach by Lecturers: ");
         for (Lecturer l : lList) {

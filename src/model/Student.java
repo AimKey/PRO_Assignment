@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
  * @author phamm
  */
 public class Student {
+
     private String name, classID;
     private LocalDate dob;
 
@@ -38,7 +39,7 @@ public class Student {
     public void setDob(LocalDate dob) {
         this.dob = dob;
     }
-    
+
     public Student() {
     }
 
@@ -48,10 +49,23 @@ public class Student {
         this.dob = LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
     }
-   
-    
+
     @Override
     public String toString() {
         return "Student name: " + name + ", classID: " + classID + ", Dob: " + getDob();
+    }
+//    ---------------------------------
+
+    public static String formatDate(String userDate) {
+        String[] dateTime = userDate.split("/");
+        if (dateTime[0].length() == 1) {
+            dateTime[0] = "0" + dateTime[0];
+        }
+        if (dateTime[1].length() == 1) {
+            dateTime[1] = "0" + dateTime[1];
+            String newDateTime = String.join("/", dateTime);
+            return newDateTime;
+        }
+        return userDate;
     }
 }

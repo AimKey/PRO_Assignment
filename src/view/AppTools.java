@@ -8,7 +8,7 @@ public class AppTools {
     public static String getString (String msg) {
         Scanner sc = new Scanner(System.in);
         System.out.print(msg + ": ");
-        return sc.nextLine();
+        return sc.nextLine().trim();
     }
 
     public static int getInt (String msg) {
