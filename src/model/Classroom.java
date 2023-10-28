@@ -1,17 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package model;
 
 import java.util.ArrayList;
 import view.ManageView;
 import static view.ManageView.school;
 
-/**
- *
- * @author phamm
- */
+
 public class Classroom {
 
     private ArrayList<Student> sList = new ArrayList();

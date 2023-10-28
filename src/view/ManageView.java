@@ -45,6 +45,7 @@ public class ManageView extends Menu {
             default:
                 System.out.println("See you next time");
                 System.exit(0);
+                
         }
     }
 
