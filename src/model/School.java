@@ -1,9 +1,14 @@
-
 package model;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.function.Predicate;
-import static view.ManageView.school;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import view.ManageView;
 
 public class School {
 
@@ -28,16 +33,14 @@ public class School {
 
     public School() {
     }
+//    Copy Classroom arraylist
 
-    public Classroom findClass(String findID) {
-        for (Classroom classroom : classrooms) {
-            if (classroom.getClassID().equals(findID)) {
-                return classroom;
-            }
-        }
-        return null;
-    }
-
+    /**
+     * Find class using predicate
+     *
+     * @param p
+     * @return Classroom object
+     */
     public Classroom searchClass(Predicate<Classroom> p) {
         for (Classroom cl : classrooms) {
             if (p.test(cl)) {
@@ -52,23 +55,48 @@ public class School {
     }
 
     /**
-     * Use to show all classrooms in a school. Will display Students, Lecturers,
-     * and course of each class room
+     * Use to show all classrooms in a school. Will display Students, Lecturers, and course of each class room
      */
-    public void showClasses() {
+    public void showAll() {
         System.out.println("List of available classes:");
         for (Classroom classroom : classrooms) {
             classroom.display();
         }
+        System.out.print("Courses:");
+        System.out.println(this.courses.toString());
     }
 //    -----------------------------
 
+    /**
+     * Show a list of course in order Ex: 1. Math 2. English
+     */
     public void showCourses() {
-        System.out.println("Available courses:");
-        for (String c : courses) {
-            System.out.print(c + " ");
+        if (!this.courses.isEmpty()) {
+            System.out.println("Available courses:");
+            for (int i = 0; i < this.courses.size(); i++) {
+                System.out.println((i + 1) + ". " + this.courses.get(i));
+            }
+        } else {
+            System.out.println("No courses are found, please create them first!");
         }
-        System.out.println("\n-----------------------------");
+        System.out.println("-----------------------------");
+    }
+//    -----------------------------
+
+    /**
+     * Show a list of classroom ID in order Ex: 1. Math 2. English
+     */
+    public void showClassrooms() {
+        if (!this.classrooms.isEmpty()) {
+            System.out.println("Available classrooms:");
+            for (int i = 0; i < this.classrooms.size(); i++) {
+                System.out.println((i + 1) + ". " + this.classrooms.get(i).getClassID());
+            }
+        } else {
+            System.out.println("No classrooms are found, please create them first!");
+        }
+
+        System.out.println("-----------------------------");
     }
 //    -----------------------------
 
@@ -81,22 +109,41 @@ public class School {
             courses.add(s);
         }
     }
-//    -----------------------------
-//    Experimental
-    public ArrayList<String> getClassIDs() {
-        ArrayList<String> n = new ArrayList();
-        for (Classroom classroom : classrooms) {
-            n.add(classroom.getClassID());
-        }
-        return n;
-    }
 
-    //    -----------------------------
-    public String[] getCourseList() {
-        String[] clrString = new String[this.courses.size()];
-        for (int i = 0; i < this.courses.size(); i++) {
-            clrString[i] = school.getCourses().get(i);
+    /**
+     * Class ID -> Student -> Lecturer
+     *
+     * @param filePath School.txt
+     */
+    public void loadDataTxt(String filePath) {
+        try ( Scanner sc = new Scanner(new FileReader(filePath))) {
+            String classID = null;
+            while (sc.hasNextLine()) {
+                String s = sc.nextLine();
+                String[] sl = s.split(",");
+                if (s.isBlank()) {
+                    continue;
+                }
+                if (s.matches("Class:[A-Za-z0-9]*.*") == true) {
+                    classID = s.split(":")[1];
+                } else if (sl[0].equals("S")) {
+                    Classroom.addStd(sl[1], sl[2], sl[3]);
+                } else if (sl[0].equals("L")) {
+                    final String cID = classID;
+                    Classroom cr = this.searchClass(p -> p.getClassID().equals(cID));
+                    if (!this.courses.contains(sl[2])) {
+                        this.courses.add(sl[2]);
+                    }
+
+                    cr.addLec(new Lecturer(sl[1], sl[2]));
+                }
+            }
+        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(School.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Wrong data format!");
+        } catch (Exception e) {
+            System.out.println("Wrong data format!");
+            System.exit(0);
         }
-        return clrString;
     }
 }

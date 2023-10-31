@@ -1,0 +1,9 @@
+Class:9A
+S,Pham Minh Kiet,9A,24/08/2004
+S,Pham Ngoc Hong Phuc,9A,27/10/2005
+L,Nguyen Van Lanh,Math
+Class:9B
+S,Quynh Tam,9B,07/06/1976
+S,Van Ngoc,9B,22/09/1974
+L,Nguyen Thi Loan,Literature
+L,Nguyen Van Lanh,Math

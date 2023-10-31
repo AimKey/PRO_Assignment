@@ -1,4 +1,3 @@
-
 package model;
 
 import java.time.LocalDate;
@@ -42,6 +41,7 @@ public class Student {
         this.dob = LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
     }
+//-----------------------------------------------------------------------
 
     @Override
     public String toString() {
@@ -50,15 +50,20 @@ public class Student {
 //    ---------------------------------
 
     public static String formatDate(String userDate) {
-        String[] dateTime = userDate.split("/");
-        if (dateTime[0].length() == 1) {
-            dateTime[0] = "0" + dateTime[0];
+        try {
+            String[] dateTime = userDate.split("/");
+            if (dateTime[0].length() == 1) {
+                dateTime[0] = "0" + dateTime[0];
+            }
+            if (dateTime[1].length() == 1) {
+                dateTime[1] = "0" + dateTime[1];
+                String newDateTime = String.join("/", dateTime);
+                return newDateTime;
+            }
+            return userDate;
+        } catch (Exception e) {
+//            System.out.println("Wrong birthday input!");
         }
-        if (dateTime[1].length() == 1) {
-            dateTime[1] = "0" + dateTime[1];
-            String newDateTime = String.join("/", dateTime);
-            return newDateTime;
-        }
-        return userDate;
+        return null;
     }
 }
