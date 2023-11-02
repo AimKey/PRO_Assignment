@@ -93,11 +93,9 @@ public class Classroom {
         for (Lecturer l : lList) {
             System.out.println(l);
         }
-        System.out.println("Total: " + this.lList.size());
-        System.out.println("-----------------------------");
+        System.out.println("Total: " + this.sList.size() + " students, " + this.lList.size() + " lectures");
     }
 //------------------------------------------------------------------------
-
     @Override
     public String toString() {
         return "Class: " + classID;
@@ -117,12 +115,12 @@ public class Classroom {
         for (Lecturer lecturer : lList) {
             totalTimeline.addAll(lecturer.gettLine());
         }
-        Collections.sort(totalTimeline, (t1, t2) -> t1 - t2);
+        totalTimeline.sort((t1, t2) -> t1 - t2);
         System.out.println(totalTimeline.toString());
         if (totalTimeline.size() > 1) {
             for (int i = 0; i < totalTimeline.size() - 1; i++) {
                 if (Objects.equals(totalTimeline.get(i), totalTimeline.get(i + 1))) {
-                    System.out.println("Dupplicate found: " + totalTimeline.get(i));
+                    System.out.println("Duplicate found: " + totalTimeline.get(i));
                     check = false;
                     break;
                 }

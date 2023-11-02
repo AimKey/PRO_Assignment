@@ -3,12 +3,8 @@ package model;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import view.ManageView;
 
 public class School {
 
@@ -64,6 +60,8 @@ public class School {
         }
         System.out.print("Courses:");
         System.out.println(this.courses.toString());
+        System.out.println("-----------------------------");
+
     }
 //    -----------------------------------------------------------
 
@@ -130,7 +128,6 @@ public class School {
 //    -----------------------------------------------------------
     /**
      * Class ID -> Student -> Lecturer
-     *
      * @param filePath School.txt
      */
     public void loadDataTxt(String filePath) {
@@ -139,20 +136,22 @@ public class School {
             while (sc.hasNextLine()) {
                 String s = sc.nextLine();
                 String[] sl = s.split(",");
-                if (s.isEmpty()) {
-                    continue;
-                }
-                if (s.matches("Class:[A-Za-z0-9]*.*") == true) {
+                if (s.isEmpty()) continue;
+                if (s.matches("Class:[A-Za-z0-9]*.*")) {
                     classID = s.split(":")[1];
                 } else if (sl[0].equals("S")) {
                     Classroom.addStd(sl[1], sl[2], sl[3]);
                 } else if (sl[0].equals("L")) {
                     final String cID = classID;
                     Classroom cr = this.searchClass(p -> p.getClassID().equals(cID));
-                    if (!this.courses.contains(sl[2])) {
-                        this.courses.add(sl[2]);
+                    if (!this.courses.contains(sl[2])) this.courses.add(sl[2]);
+//                    Handle convert timeline to int array
+                    String[] temp = sl[3].split("-");
+                    ArrayList<Integer> timeLine = new ArrayList<>();
+                    for (String t :temp) {
+                        timeLine.add(Integer.parseInt(t));
                     }
-                    cr.addLec(new Lecturer(sl[1], sl[2]));
+                    cr.addLec(new Lecturer(sl[1], sl[2], timeLine));
                 }
             }
         } catch (FileNotFoundException ex) {

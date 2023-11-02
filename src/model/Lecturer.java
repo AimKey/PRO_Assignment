@@ -48,6 +48,11 @@ public class Lecturer {
         this.name = tName;
         this.course = tCourse;
     }
+    public Lecturer(String tName, String tCourse, ArrayList<Integer> tLine) {
+        this.name = tName;
+        this.course = tCourse;
+        this.tLine = tLine;
+    }
 //-----------------------------------------------------------------------
     /**
      * Sau nay bo

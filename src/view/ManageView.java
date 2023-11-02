@@ -1,6 +1,7 @@
 package view;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import model.Classroom;
 import model.Lecturer;
@@ -48,6 +49,7 @@ public class ManageView extends Menu {
                 setupCourse();
                 break;
             case 5:
+                showTimetable();
                 break;
             case 6:
                 break;
@@ -101,7 +103,6 @@ public class ManageView extends Menu {
         }
     }
 //----------------------------------------------------
-
     public void setupCourse() {
         Menu classMenu = new Menu(school.getClassrooms(), "Setup course - classes") {
             @Override
@@ -121,7 +122,18 @@ public class ManageView extends Menu {
         };
         classMenu.run();
     }
-//----------------------------------------------------    
+//----------------------------------------------------
+    public void showTimetable() {
+        Menu chooseCl = new Menu(school.getClassrooms(), "Choose class timetable") {
+            @Override
+            public void execute(int n) {
+                ArrayList<Lecturer> lecturers = school.getClassrooms().get(n - 1).getlList();
+                System.out.println(lecturers.toString());
+            }
+        };
+        chooseCl.run();
+    }
+//----------------------------------------------------
     public void doDebug() {
         school.showAll();
     }
