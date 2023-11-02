@@ -1,5 +1,7 @@
 package view;
 
+import model.School;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,7 +23,7 @@ public class AppTools {
             return false;
         } else return true;
     }
-    
+
     public static <T> boolean show(ArrayList<T> target, String title) {
         if (!target.isEmpty()) {
             System.out.println("Available " + title + ":");
@@ -34,5 +36,26 @@ public class AppTools {
         }
         System.out.println("-----------------------------");
         return true;
+    }
+
+    public static <T> void printArr(T[][] array) {
+        String[] weekdays = School.weekdays;
+        for (int i = 0; i < array.length; i++) {
+//            Columns
+            for (int j = 0; j < array[0].length; j++) {
+                if (i == 0) {
+                    System.out.printf("%-14s", weekdays[j]);
+                    continue;
+                }
+                if (j == 0) {
+                    String sl = "Slot " + i + ":";
+                    System.out.printf("%-14s", sl);
+                } else {
+                    String s = (array[i][j] == null ? " - " : (String) array[i][j]);
+                    System.out.printf("%-14s", s);
+                }
+            }
+            System.out.println();
+        }
     }
 }

@@ -1,28 +1,29 @@
 package view;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import model.Classroom;
 import model.Lecturer;
 import model.School;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ManageView extends Menu {
 
     public static School school = new School();
-    private static String filePath = "School.txt";
 
     public static void main(String[] args) {
-        ManageView menu = new ManageView(filePath);
+        ManageView menu = new ManageView("School.txt");
         menu.run();
     }
+
     static String[] mc = {"Add Student", "Add course", "Add lecturer", "Course enroll", "Timetable", "Search class", "Show all (debug)", "Exit"};
 
     public ManageView() {
         super(mc, "Student Management");
     }
-//    Student -> Teacher -> Course
 
+    //    Student -> Teacher -> Course
     public ManageView(String filePath) {
         super(mc, "Student Management");
         if (new File(filePath).exists()) {
@@ -30,8 +31,8 @@ public class ManageView extends Menu {
             school.loadDataTxt(filePath);
         }
     }
-//--------------------------------------------
 
+    //--------------------------------------------
     @Override
     public void execute(int n) {
         // Debug
@@ -62,7 +63,8 @@ public class ManageView extends Menu {
                 System.exit(0);
         }
     }
-//-----------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------
     public void addStudent() {
         String sName = AppTools.getString("Name");
         String sDob = AppTools.getString("Dob (format: dd/MM/yyyy)");
@@ -102,7 +104,8 @@ public class ManageView extends Menu {
             System.out.println("No classes / courses are found, please create them first!");
         }
     }
-//----------------------------------------------------
+
+    //----------------------------------------------------
     public void setupCourse() {
         Menu classMenu = new Menu(school.getClassrooms(), "Setup course - classes") {
             @Override
@@ -111,7 +114,7 @@ public class ManageView extends Menu {
                 Menu lecMenu = new Menu(cr.getlList(), "Setup course - Lectures of " + cr.getClassID()) {
                     @Override
                     public void execute(int n) {
-                        Lecturer r = cr.getlList().get(n-1);
+                        Lecturer r = cr.getlList().get(n - 1);
                         r.setupTimeline();
                         System.out.println(r.displayTLine());
                         school.checkLecturerTL(r);
@@ -122,18 +125,29 @@ public class ManageView extends Menu {
         };
         classMenu.run();
     }
-//----------------------------------------------------
+
+    //----------------------------------------------------
     public void showTimetable() {
         Menu chooseCl = new Menu(school.getClassrooms(), "Choose class timetable") {
             @Override
             public void execute(int n) {
-                ArrayList<Lecturer> lecturers = school.getClassrooms().get(n - 1).getlList();
-                System.out.println(lecturers.toString());
+                String[][] timetable = new String[4 + 1][6 + 1];
+                Classroom cr = school.getClassrooms().get(n - 1);
+                ArrayList<Lecturer> lecturers = cr.getlList();
+                for (Lecturer l : lecturers) {
+                    for (int item : l.gettLine()) {
+                        int[] pos = l.calTLine(item);
+                        System.out.println(Arrays.toString(pos));
+                        timetable[pos[0]][pos[1]] = l.getCourse();
+                    }
+                }
+                AppTools.printArr(timetable);
             }
         };
         chooseCl.run();
     }
-//----------------------------------------------------
+
+    //----------------------------------------------------
     public void doDebug() {
         school.showAll();
     }

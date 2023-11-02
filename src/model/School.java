@@ -8,9 +8,10 @@ import java.util.function.Predicate;
 
 public class School {
 
-    private ArrayList<Classroom> classrooms = new ArrayList();
-    private ArrayList<String> courses = new ArrayList();
-
+    private ArrayList<Classroom> classrooms = new ArrayList<>();
+    private ArrayList<String> courses = new ArrayList<>();
+    public static String[] weekdays = {"", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+    public static int numberOfSlots = (weekdays.length - 1) * 4;
     public ArrayList<Classroom> getClassrooms() {
         return classrooms;
     }
@@ -45,11 +46,13 @@ public class School {
         }
         return null;
     }
-//  -----------------------------------------------------------
+
+    //  -----------------------------------------------------------
     public void addClasses(Classroom cls) {
         classrooms.add(cls);
     }
 //  -----------------------------------------------------------
+
     /**
      * Use to show all classrooms in a school. Will display Students, Lecturers, and course of each class room
      */
@@ -108,8 +111,10 @@ public class School {
         }
     }
 //    -----------------------------------------------------------
+
     /**
      * Use to check if a teacher has his timeline duplicated (Teach two class with the same timeline)
+     *
      * @param l The teacher to check for
      */
     public void checkLecturerTL(Lecturer l) {
@@ -122,16 +127,18 @@ public class School {
             }
         }
         System.out.println("Giao vien tim duoc: " + lList);
-        System.out.println("Total: " +lList.size());
+        System.out.println("Total: " + lList.size());
         Classroom.checkLecturerTL(lList);
     }
 //    -----------------------------------------------------------
+
     /**
      * Class ID -> Student -> Lecturer
+     *
      * @param filePath School.txt
      */
     public void loadDataTxt(String filePath) {
-        try ( Scanner sc = new Scanner(new FileReader(filePath))) {
+        try (Scanner sc = new Scanner(new FileReader(filePath))) {
             String classID = null;
             while (sc.hasNextLine()) {
                 String s = sc.nextLine();
@@ -148,7 +155,7 @@ public class School {
 //                    Handle convert timeline to int array
                     String[] temp = sl[3].split("-");
                     ArrayList<Integer> timeLine = new ArrayList<>();
-                    for (String t :temp) {
+                    for (String t : temp) {
                         timeLine.add(Integer.parseInt(t));
                     }
                     cr.addLec(new Lecturer(sl[1], sl[2], timeLine));
@@ -158,6 +165,7 @@ public class School {
 //            Logger.getLogger(School.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Wrong data format!");
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Wrong data format!");
             System.exit(0);
         }
