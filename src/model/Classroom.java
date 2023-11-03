@@ -1,15 +1,16 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
-import view.AppTools;
-import view.ManageView;
+import console.AppTools;
+import studentManagement.StudentManagement;
+
+import static studentManagement.StudentManagement.logs;
 
 public class Classroom {
 
-    private ArrayList<Student> sList = new ArrayList();
-    private ArrayList<Lecturer> lList = new ArrayList();
+    private ArrayList<Student> sList = new ArrayList<>();
+    private ArrayList<Lecturer> lList = new ArrayList<>();
     private String classID;
 
     /**
@@ -54,17 +55,22 @@ public class Classroom {
             sDob = Student.formatDate(sDob);
             try {
                 Student s = new Student(sName, sClassID, sDob);
-                Classroom cr = ManageView.school.searchClass(p -> p.classID.equals(sClassID));
+                Classroom cr = StudentManagement.school.searchClass(p -> p.classID.equals(sClassID));
                 if (cr == null) {
                     Classroom n = new Classroom(s.getClassID());
                     n.sList.add(s);
-                    ManageView.school.addClasses(n);
-//                    Debug
+                    StudentManagement.school.addClasses(n);
+//                    Logs here
+                    logs.getLogsClassroom(sClassID);
+                    logs.getLogsStudent(sName, sClassID);
+
                 } else {
+//                    Logs here
                     cr.sList.add(s);
+                    logs.getLogsStudent(sName, sClassID);
                 }
             } catch (Exception e) {
-                System.out.println("Wrong birthday!");
+                logs.warn("Wrong " +sName +" birthday");
             }
         }
     }
@@ -72,15 +78,15 @@ public class Classroom {
 
     public void addLec(Lecturer l) {
         if (this.getlList().contains(l)) {
-            System.out.println("This lecturer is already in the class");
+            logs.warn("This lecturer is already in the class");
         } else if (!Lecturer.checkValid(l)) {
-            System.out.println("Lecturer name is not valid");
+            logs.warn("Lecturer name is not valid");
         } else {
             lList.add(l);
+            logs.getLogsLecturer(l.getName(),l.getCourse(),this.getClassID());
         }
     }
 //------------------------------------------------------------------------
-
     public void display() {
         System.out.println("Class " + this.classID);
         System.out.println("Students of " + this.classID);
@@ -94,40 +100,32 @@ public class Classroom {
             System.out.println(l);
         }
         System.out.println("Total: " + this.sList.size() + " students, " + this.lList.size() + " lectures");
+        System.out.println("-----------------------------");
     }
 //------------------------------------------------------------------------
     @Override
     public String toString() {
-        return "Class: " + classID;
+        return "Class:" + classID;
     }
 //------------------------------------------------------------------------
-
     /**
-     * 1: 2 giao vien 1 lop trung gio nhau 
-     * 2: 1 giao vien o nhieu lop trung gio nhau
+     * Ham nay se kiem tra xem cac Lecturer trong lList co trung gio nhau ko
+     * 2 truong hop trung gio co the xay ra:
+     * 1. Trung gio giua cac giao vien trong 1 lop
+     * 2. Trung gio cua 1 giao vien trong nhieu lop
      * @param lList a list of lecturer to be checked
      */
-    public static void checkLecturerTL(ArrayList<Lecturer> lList) {
-        System.out.println("Checking for error");
-        boolean check = true;
-//        TH1:
+    public static boolean checkLecturerTL(ArrayList<Lecturer> lList) {
         ArrayList<Integer> totalTimeline = new ArrayList<>();
         for (Lecturer lecturer : lList) {
             totalTimeline.addAll(lecturer.gettLine());
         }
         totalTimeline.sort((t1, t2) -> t1 - t2);
-        System.out.println(totalTimeline.toString());
         if (totalTimeline.size() > 1) {
             for (int i = 0; i < totalTimeline.size() - 1; i++) {
-                if (Objects.equals(totalTimeline.get(i), totalTimeline.get(i + 1))) {
-                    System.out.println("Duplicate found: " + totalTimeline.get(i));
-                    check = false;
-                    break;
-                }
+                if (Objects.equals(totalTimeline.get(i), totalTimeline.get(i + 1))) return false;
             }
-        } else {
-            System.out.println("No one to compare (Debug)");
         }
-        
+        return true;
     }
 }

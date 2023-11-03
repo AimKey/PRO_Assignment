@@ -1,22 +1,15 @@
 package model;
 
-import view.AppTools;
+import console.AppTools;
+import studentManagement.StudentManagement;
 
 import java.util.ArrayList;
 
 public class Lecturer {
 
-    private String name, course, firstName;
+    private String name, course;
     private ArrayList<String> lClasses = new ArrayList<>();
     private ArrayList<Integer> tLine = new ArrayList<>();
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
 
     public String getName() {
         return name;
@@ -67,7 +60,7 @@ public class Lecturer {
 
     //-----------------------------------------------------------------------
     public String toString() {
-        return "Lecturer name: " + firstName + ", course: " + course + ", timeline: " + displayTLine();
+        return "Lecturer name: " + name + ", course: " + course + ", timeline: " + displayTLine();
     }
 //    -------------------------------------------
 
@@ -78,7 +71,6 @@ public class Lecturer {
     public static boolean checkValid(Lecturer s) {
         return AppTools.checkName(s.name);
     }
-
     public void setupTimeline() {
         System.out.println("Enter to cancel");
         try {
@@ -92,7 +84,7 @@ public class Lecturer {
                 }
 //            [mon],[4]
                 if (Integer.parseInt(date[1]) < 1 || Integer.parseInt(date[1]) > 4) {
-                    System.out.println("Wrong input!");
+                    StudentManagement.logs.warn("Slot should not bigger than 4");
                     continue;
                 }
                 switch (date[0].toLowerCase()) {
@@ -121,14 +113,14 @@ public class Lecturer {
                         break;
                     }
                     default: {
-                        System.out.println("Wrong format!");
+                        StudentManagement.logs.warn("Wrong timeline format!");
                     }
                 }
                 tLine.sort((t1, t2) -> t1 - t2);
-                System.out.println(displayTLine());
             } while (true);
+            System.out.println(this.displayTLine());
         } catch (NumberFormatException e) {
-            System.out.println("Wrong input");
+            StudentManagement.logs.warn("Wrong input");
         }
     }
 
@@ -139,16 +131,7 @@ public class Lecturer {
 //            if (tLineNumber / 21 >= 1) {
 //                result.add("SAT - Slot " + (tLineNumber - 20));
 //            } else if (tLineNumber / 17 >= 1) {
-//                result.add("FRI - Slot " + (tLineNumber - 16));
-//            } else if (tLineNumber / 13 >= 1) {
-//                result.add("THU - Slot " + (tLineNumber - 12));
-//            } else if (tLineNumber / 9 >= 1) {
-//                result.add("WED - Slot " + (tLineNumber - 8));
-//            } else if (tLineNumber / 5 >= 1) {
-//                result.add("TUE - Slot " + (tLineNumber - 4));
-//            } else {
-//                result.add("MON - Slot " + tLineNumber);
-//            }
+//                result.add("FRI - Slot " + (tLineNumber - 16)); (same for the rest)
             int limit = School.numberOfSlots - 4;
             int length = School.weekdays.length - 1;
             for (int i = 0; i < 6; i++) {
@@ -165,8 +148,6 @@ public class Lecturer {
         return result.toString();
     }
 //-------------------------------------------------------------------------------
-//                A column is reserved for slots
-//                A row is dedicated for weekdays
     public static int[] calTLine(int pos) {
         int[] result = new int[2];
         int limit = School.numberOfSlots - 4;

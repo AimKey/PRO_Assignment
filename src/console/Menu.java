@@ -1,4 +1,4 @@
-package Console;
+package console;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -10,6 +10,13 @@ public abstract class Menu {
 
     public Menu(String[] mc, String td){
        for(String m:mc) mChon.add(m);
+       title=td;
+    }
+/**
+ * This is for menus with changing elements
+ */
+    public Menu(ArrayList mc, String td){
+       mChon = mc;
        title=td;
     }
 //--------------------------------------
@@ -45,7 +52,7 @@ public abstract class Menu {
     public void run(){
         while(true){
             int n=getSelected();
-            if(n>mChon.size()) break;
+            if(n>mChon.size() || n <= 0) break;
             execute(n);
         }
     }

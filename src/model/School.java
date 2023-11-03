@@ -1,7 +1,8 @@
 package model;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import studentManagement.StudentManagement;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -12,6 +13,7 @@ public class School {
     private ArrayList<String> courses = new ArrayList<>();
     public static String[] weekdays = {"", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
     public static int numberOfSlots = (weekdays.length - 1) * 4;
+
     public ArrayList<Classroom> getClassrooms() {
         return classrooms;
     }
@@ -55,6 +57,7 @@ public class School {
 
     /**
      * Use to show all classrooms in a school. Will display Students, Lecturers, and course of each class room
+     * Only for debug, delete later
      */
     public void showAll() {
         System.out.println("List of available classes:");
@@ -68,44 +71,12 @@ public class School {
     }
 //    -----------------------------------------------------------
 
-    /**
-     * Show a list of course in order Ex: 1. Math 2. English
-     */
-    public void showCourses() {
-        if (!this.courses.isEmpty()) {
-            System.out.println("Available courses:");
-            for (int i = 0; i < this.courses.size(); i++) {
-                System.out.println((i + 1) + ". " + this.courses.get(i));
-            }
-        } else {
-            System.out.println("No courses are found, please create them first!");
-        }
-        System.out.println("-----------------------------");
-    }
-//    -----------------------------------------------------------
-
-    /**
-     * Show a list of classroom ID in order Ex: 1. Math 2. English
-     */
-    public void showClassrooms() {
-        if (!this.classrooms.isEmpty()) {
-            System.out.println("Available classrooms:");
-            for (int i = 0; i < this.classrooms.size(); i++) {
-                System.out.println((i + 1) + ". " + this.classrooms.get(i).getClassID());
-            }
-        } else {
-            System.out.println("No classrooms are found, please create them first!");
-        }
-
-        System.out.println("-----------------------------");
-    }
-//    -----------------------------------------------------------
 
     public void addCourse(String s) {
         if (!s.matches("^[a-zA-Z0-9]+$")) {
-            System.out.println("One course at a time only!");
+            StudentManagement.logs.warn("One course at a time only");
         } else if (courses.contains(s)) {
-            System.out.println("Course already exists");
+            StudentManagement.logs.warn("Course already exists");
         } else {
             courses.add(s);
         }
@@ -117,7 +88,7 @@ public class School {
      *
      * @param l The teacher to check for
      */
-    public void checkLecturerTL(Lecturer l) {
+    public boolean checkLecturerTL(Lecturer l, String lClassID) {
         ArrayList<Lecturer> lList = new ArrayList<>();
         for (Classroom cl : this.classrooms) {
             for (Lecturer lecturer : cl.getlList()) {
@@ -126,9 +97,10 @@ public class School {
                 }
             }
         }
-        System.out.println("Giao vien tim duoc: " + lList);
-        System.out.println("Total: " + lList.size());
-        Classroom.checkLecturerTL(lList);
+        boolean check1 = Classroom.checkLecturerTL(this.searchClass(p -> p.getClassID().equals(lClassID)).getlList());
+        boolean check2 = Classroom.checkLecturerTL(lList);
+        return check1 && check2;
+
     }
 //    -----------------------------------------------------------
 
@@ -144,30 +116,62 @@ public class School {
                 String s = sc.nextLine();
                 String[] sl = s.split(",");
                 if (s.isEmpty()) continue;
+
                 if (s.matches("Class:[A-Za-z0-9]*.*")) {
                     classID = s.split(":")[1];
+
                 } else if (sl[0].equals("S")) {
                     Classroom.addStd(sl[1], sl[2], sl[3]);
+
                 } else if (sl[0].equals("L")) {
                     final String cID = classID;
                     Classroom cr = this.searchClass(p -> p.getClassID().equals(cID));
-                    if (!this.courses.contains(sl[2])) this.courses.add(sl[2]);
+
+                    if (!this.courses.contains(sl[2])) {
+                        this.courses.add(sl[2]);
+                        StudentManagement.logs.getLogsCourse(sl[2]);
+                    }
+
 //                    Handle convert timeline to int array
                     String[] temp = sl[3].split("-");
                     ArrayList<Integer> timeLine = new ArrayList<>();
                     for (String t : temp) {
                         timeLine.add(Integer.parseInt(t));
                     }
+
                     cr.addLec(new Lecturer(sl[1], sl[2], timeLine));
                 }
             }
         } catch (FileNotFoundException ex) {
-//            Logger.getLogger(School.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Wrong data format!");
+            StudentManagement.logs.warn("File not found, creating new...");
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Wrong data format!");
-            System.exit(0);
+            StudentManagement.logs.warn("Wrong data format!");
         }
+    }
+
+    //    -----------------------------------------------------------
+    public void doSave(String filePath) {
+        try (BufferedWriter br = new BufferedWriter(new FileWriter(filePath))) {
+            for (Classroom cl : this.classrooms) {
+                br.write(cl.toString() + "\n");
+                for (Student s : cl.getsList()) {
+                    br.write(String.format("S,%s,%s,%s\n", s.getName(), s.getClassID(), s.getDob()));
+                }
+                for (Lecturer l : cl.getlList()) {
+                    br.write(String.format("L,%s,%s,%s\n",
+                            l.getName(), l.getCourse(), handleTimeline(l.gettLine())));
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String handleTimeline(ArrayList<Integer> tl) {
+        String[] s = new String[tl.size()];
+        for (int i = 0; i < tl.size(); i++) {
+            s[i] = String.valueOf(tl.get(i));
+        }
+        return String.join("-", s);
     }
 }

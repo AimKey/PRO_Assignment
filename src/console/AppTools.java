@@ -1,6 +1,8 @@
-package view;
+package console;
 
 import model.School;
+import model.Student;
+import studentManagement.StudentManagement;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -19,7 +21,7 @@ public class AppTools {
 
     public static boolean checkName(String name) {
         if (!name.matches("^[A-Za-z ]+$")) {
-            System.out.println("Name is not allowed to have numbers or special characters !");
+            StudentManagement.logs.warn("Name is not allowed to have numbers or special characters");
             return false;
         } else return true;
     }
@@ -38,7 +40,9 @@ public class AppTools {
         return true;
     }
 
-    public static <T> void printArr(T[][] array) {
+    public static <T> void printArr(T[][] array, String classID) {
+        System.out.println("Timetable for class " + classID);
+        System.out.println("-----------------------------");
         String[] weekdays = School.weekdays;
         for (int i = 0; i < array.length; i++) {
 //            Columns
@@ -57,5 +61,6 @@ public class AppTools {
             }
             System.out.println();
         }
+        System.out.println("-----------------------------");
     }
 }

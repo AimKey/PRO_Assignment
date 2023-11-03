@@ -1,33 +1,33 @@
-package view;
+package studentManagement;
 
+import console.AppTools;
+import console.Menu;
+import console.SchoolLogs;
 import model.Classroom;
 import model.Lecturer;
 import model.School;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class ManageView extends Menu {
+public class StudentManagement extends Menu {
 
     public static School school = new School();
-
+    public static SchoolLogs logs = new SchoolLogs();
     public static void main(String[] args) {
-        ManageView menu = new ManageView("School.txt");
-        menu.run();
+        try {
+            StudentManagement menu = new StudentManagement("School.txt");
+            menu.run();
+        } catch (Exception e) {
+            logs.warn("Wrong input");
+        }
     }
 
-    static String[] mc = {"Add Student", "Add course", "Add lecturer", "Course enroll", "Timetable", "Search class", "Show all (debug)", "Exit"};
-
-    public ManageView() {
-        super(mc, "Student Management");
-    }
-
-    //    Student -> Teacher -> Course
-    public ManageView(String filePath) {
+    static String[] mc = {"Add Student", "Add course", "Add lecturer", "Course enroll", "Timetable", "Search class",
+            "Show logs", "Exit"};
+    public StudentManagement(String filePath) {
         super(mc, "Student Management");
         if (new File(filePath).exists()) {
-            System.out.println("Loading " + filePath);
             school.loadDataTxt(filePath);
         }
     }
@@ -55,31 +55,29 @@ public class ManageView extends Menu {
             case 6:
                 break;
             case 7:
-//                Delete this when you are done
                 doDebug();
                 break;
             case 8:
+                school.doSave("school.txt");
                 System.out.println("See you next time!");
                 System.exit(0);
         }
     }
-
-    //-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
     public void addStudent() {
         String sName = AppTools.getString("Name");
         String sDob = AppTools.getString("Dob (format: dd/MM/yyyy)");
         String sClassID = AppTools.getString("ClassID").toUpperCase();
+//        Logs go to addStd
         Classroom.addStd(sName, sClassID, sDob);
-//        Debug
-        school.showAll();
     }
 //-----------------------------------------------------------------------
 
     public void addCourse() {
         String course = AppTools.getString("Course name");
         school.addCourse(course);
-//        Debug
-        school.showCourses();
+//        Logs go here
+        logs.getLogsCourse(course);
     }
 //-----------------------------------------------------------------------
 
@@ -97,11 +95,10 @@ public class ManageView extends Menu {
                 AppTools.show(school.getClassrooms(), "classrooms");
                 Classroom cr = crs.get(AppTools.getInt("Choose teacher class: ") - 1);
                 cr.addLec(s);
+
             } while (AppTools.getString("Assign to another class? (y/n)").equals("y"));
-            System.out.println(s);
-            school.showAll();
         } catch (Exception e) {
-            System.out.println("No classes / courses are found, please create them first!");
+            logs.warn("No classes / courses are found, please create them first");
         }
     }
 
@@ -116,8 +113,9 @@ public class ManageView extends Menu {
                     public void execute(int n) {
                         Lecturer r = cr.getlList().get(n - 1);
                         r.setupTimeline();
-                        System.out.println(r.displayTLine());
-                        school.checkLecturerTL(r);
+                        boolean check = school.checkLecturerTL(r, cr.getClassID());
+                        if (!check)
+                            logs.warn("2 or more lecturers have the same timetable");
                     }
                 };
                 lecMenu.run();
@@ -136,12 +134,12 @@ public class ManageView extends Menu {
                 ArrayList<Lecturer> lecturers = cr.getlList();
                 for (Lecturer l : lecturers) {
                     for (int item : l.gettLine()) {
-                        int[] pos = l.calTLine(item);
-                        System.out.println(Arrays.toString(pos));
+                        int[] pos = Lecturer.calTLine(item);
                         timetable[pos[0]][pos[1]] = l.getCourse();
                     }
                 }
-                AppTools.printArr(timetable);
+//                Logs go here
+                AppTools.printArr(timetable, cr.getClassID());
             }
         };
         chooseCl.run();
@@ -149,7 +147,8 @@ public class ManageView extends Menu {
 
     //----------------------------------------------------
     public void doDebug() {
-        school.showAll();
+//        school.showAll();
+        logs.displayLog();
     }
 //----------------------------------------------------
 }

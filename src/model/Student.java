@@ -60,7 +60,6 @@ public class Student {
             }
             return userDate;
         } catch (Exception e) {
-//            System.out.println("Wrong birthday input!");
         }
         return null;
     }
