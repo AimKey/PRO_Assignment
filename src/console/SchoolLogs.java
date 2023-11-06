@@ -1,5 +1,7 @@
 package console;
 
+import model.Lecturer;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -38,6 +40,12 @@ public class SchoolLogs extends ArrayList<String> {
     }
     public void getLogsLecturer (String name, String course, String classID) {
         String s = String.format("-> %s teacher %s added to %s at %s", course, name, classID,getTimeNow());
+        this.add(s);
+        System.out.println(s);
+    }
+
+    public void getLogsTimeline(Lecturer r) {
+        String s = String.format("-> Teacher %s changed timeline to %s at %s", r.getName(), Lecturer.displayTLine(r),getTimeNow());
         this.add(s);
         System.out.println(s);
     }
