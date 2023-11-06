@@ -68,21 +68,13 @@ public class Lecturer {
      * @param s: A lecturer with String name, String course, ArrayList<String> lClasses
      * @return boolean
      */
-    public static boolean checkValid(Lecturer s) {
-        return AppTools.checkName(s.name);
-    }
     public void setupTimeline() {
         System.out.println("Enter to cancel");
         try {
             tLine = new ArrayList<>();
             do {
-//            mon-4
                 String[] date = AppTools.getString("Enter schedule (Ex: mon-4)").split("-");
-                if (date.length == 1) {
-                    System.out.println("Canceled!");
-                    break;
-                }
-//            [mon],[4]
+                if (date.length == 1) break;
                 if (Integer.parseInt(date[1]) < 1 || Integer.parseInt(date[1]) > 4) {
                     StudentManagement.logs.warn("Slot should not bigger than 4");
                     continue;

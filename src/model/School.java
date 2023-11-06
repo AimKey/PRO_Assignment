@@ -32,14 +32,7 @@ public class School {
 
     public School() {
     }
-//    Copy Classroom arraylist
-
-    /**
-     * Find class using predicate
-     *
-     * @param p
-     * @return Classroom object
-     */
+//  -----------------------------------------------------------
     public Classroom searchClass(Predicate<Classroom> p) {
         for (Classroom cl : classrooms) {
             if (p.test(cl)) {
@@ -49,16 +42,7 @@ public class School {
         return null;
     }
 
-    //  -----------------------------------------------------------
-    public void addClasses(Classroom cls) {
-        classrooms.add(cls);
-    }
 //  -----------------------------------------------------------
-
-    /**
-     * Use to show all classrooms in a school. Will display Students, Lecturers, and course of each class room
-     * Only for debug, delete later
-     */
     public void showAll() {
         System.out.println("List of available classes:");
         for (Classroom classroom : classrooms) {
@@ -70,8 +54,6 @@ public class School {
 
     }
 //    -----------------------------------------------------------
-
-
     public void addCourse(String s) {
         if (!s.matches("^[a-zA-Z0-9]+$")) {
             StudentManagement.logs.warn("One course at a time only");
@@ -79,10 +61,10 @@ public class School {
             StudentManagement.logs.warn("Course already exists");
         } else {
             courses.add(s);
+            StudentManagement.logs.getLogsCourse(s);
         }
     }
 //    -----------------------------------------------------------
-
     /**
      * Use to check if a teacher has his timeline duplicated (Teach two class with the same timeline)
      *
@@ -100,10 +82,8 @@ public class School {
         boolean check1 = Classroom.checkLecturerTL(this.searchClass(p -> p.getClassID().equals(lClassID)).getlList());
         boolean check2 = Classroom.checkLecturerTL(lList);
         return check1 && check2;
-
     }
 //    -----------------------------------------------------------
-
     /**
      * Class ID -> Student -> Lecturer
      *
@@ -131,7 +111,6 @@ public class School {
                         this.courses.add(sl[2]);
                         StudentManagement.logs.getLogsCourse(sl[2]);
                     }
-
 //                    Handle convert timeline to int array
                     String[] temp = sl[3].split("-");
                     ArrayList<Integer> timeLine = new ArrayList<>();
@@ -148,9 +127,8 @@ public class School {
             StudentManagement.logs.warn("Wrong data format!");
         }
     }
-
-    //    -----------------------------------------------------------
-    public void doSave(String filePath) {
+//    -----------------------------------------------------------
+    public void saveDataTxt(String filePath) {
         try (BufferedWriter br = new BufferedWriter(new FileWriter(filePath))) {
             for (Classroom cl : this.classrooms) {
                 br.write(cl.toString() + "\n");
@@ -174,4 +152,5 @@ public class School {
         }
         return String.join("-", s);
     }
+//    -----------------------------------------------------------
 }
