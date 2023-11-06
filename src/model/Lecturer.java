@@ -1,7 +1,7 @@
 package model;
 
 import console.AppTools;
-import studentManagement.StudentManagement;
+import view_controller.StudentManagement;
 
 import java.util.ArrayList;
 
@@ -60,13 +60,12 @@ public class Lecturer {
 
     //-----------------------------------------------------------------------
     public String toString() {
-        return "Lecturer name: " + name + ", course: " + course + ", timeline: " + displayTLine();
+        return "Lecturer name: " + name + ", course: " + course + ", timeline: " + displayTLine(this);
     }
 //    -------------------------------------------
 
     /**
-     * @param s: A lecturer with String name, String course, ArrayList<String> lClasses
-     * @return boolean
+     * * @return boolean
      */
     public void setupTimeline() {
         System.out.println("Enter to cancel");
@@ -110,16 +109,14 @@ public class Lecturer {
                 }
                 tLine.sort((t1, t2) -> t1 - t2);
             } while (true);
-            System.out.println(this.displayTLine());
         } catch (NumberFormatException e) {
             StudentManagement.logs.warn("Wrong input");
         }
     }
-
-    //-------------------------------------------------------------------------------
-    public String displayTLine() {
+//-------------------------------------------------------------------------------
+    public static String displayTLine(Lecturer lecturer) {
         ArrayList<String> result = new ArrayList<>();
-        for (Integer tLineNumber : this.tLine) {
+        for (Integer tLineNumber : lecturer.tLine) {
 //            if (tLineNumber / 21 >= 1) {
 //                result.add("SAT - Slot " + (tLineNumber - 20));
 //            } else if (tLineNumber / 17 >= 1) {

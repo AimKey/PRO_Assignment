@@ -1,6 +1,6 @@
 package model;
 
-import studentManagement.StudentManagement;
+import view_controller.StudentManagement;
 
 import java.io.*;
 import java.util.ArrayList;

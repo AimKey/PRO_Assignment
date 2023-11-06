@@ -1,4 +1,4 @@
-package studentManagement;
+package view_controller;
 
 import console.AppTools;
 import console.Menu;
@@ -107,6 +107,7 @@ public class StudentManagement extends Menu {
                     public void execute(int n) {
                         Lecturer r = cr.getlList().get(n - 1);
                         r.setupTimeline();
+                        System.out.println(Lecturer.displayTLine(r));
                         boolean check = school.checkLecturerTL(r, cr.getClassID());
                         if (!check)
                             logs.warn("2 or more lecturers have the same timetable");

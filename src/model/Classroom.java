@@ -1,12 +1,12 @@
 package model;
 
 import console.AppTools;
-import studentManagement.StudentManagement;
+import view_controller.StudentManagement;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static studentManagement.StudentManagement.logs;
+import static view_controller.StudentManagement.logs;
 
 public class Classroom {
 

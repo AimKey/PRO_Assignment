@@ -1,8 +1,7 @@
 package console;
 
 import model.School;
-import model.Student;
-import studentManagement.StudentManagement;
+import view_controller.StudentManagement;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -18,6 +17,7 @@ public class AppTools {
     public static int getInt(String msg) {
         return Integer.parseInt(getString(msg));
     }
+//------------------------------------------------------------------------
 
     public static boolean checkName(String name) {
         if (!name.matches("^[A-Za-z ]+$")) {
@@ -25,6 +25,7 @@ public class AppTools {
             return false;
         } else return true;
     }
+//------------------------------------------------------------------------
 
     public static <T> boolean show(ArrayList<T> target, String title) {
         if (!target.isEmpty()) {
@@ -39,7 +40,7 @@ public class AppTools {
         System.out.println("-----------------------------");
         return true;
     }
-
+//------------------------------------------------------------------------
     public static <T> void printArr(T[][] array, String classID) {
         System.out.println("Timetable for class " + classID);
         System.out.println("-----------------------------");
@@ -63,4 +64,5 @@ public class AppTools {
         }
         System.out.println("-----------------------------");
     }
+
 }
