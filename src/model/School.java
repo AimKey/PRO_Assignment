@@ -32,7 +32,8 @@ public class School {
 
     public School() {
     }
-//  -----------------------------------------------------------
+
+    //  -----------------------------------------------------------
     public Classroom searchClass(Predicate<Classroom> p) {
         for (Classroom cl : classrooms) {
             if (p.test(cl)) {
@@ -42,7 +43,7 @@ public class School {
         return null;
     }
 
-//  -----------------------------------------------------------
+    //  -----------------------------------------------------------
     public void showAll() {
         System.out.println("List of available classes:");
         for (Classroom classroom : classrooms) {
@@ -53,7 +54,8 @@ public class School {
         System.out.println("-----------------------------");
 
     }
-//    -----------------------------------------------------------
+
+    //    -----------------------------------------------------------
     public void addCourse(String s) {
         if (!s.matches("^[a-zA-Z0-9]+$")) {
             StudentManagement.logs.warn("One course at a time only");
@@ -65,6 +67,7 @@ public class School {
         }
     }
 //    -----------------------------------------------------------
+
     /**
      * Use to check if a teacher has his timeline duplicated (Teach two class with the same timeline)
      *
@@ -84,6 +87,7 @@ public class School {
         return check1 && check2;
     }
 //    -----------------------------------------------------------
+
     /**
      * Class ID -> Student -> Lecturer
      *
@@ -112,12 +116,13 @@ public class School {
                         StudentManagement.logs.getLogsCourse(sl[2]);
                     }
 //                    Handle convert timeline to int array
-                    String[] temp = sl[3].split("-");
                     ArrayList<Integer> timeLine = new ArrayList<>();
-                    for (String t : temp) {
-                        timeLine.add(Integer.parseInt(t));
+                    if (sl.length == 4) {
+                        String[] temp = sl[3].split("-");
+                        for (String t : temp) {
+                            timeLine.add(Integer.parseInt(t));
+                        }
                     }
-
                     cr.addLec(new Lecturer(sl[1], sl[2], timeLine));
                 }
             }
@@ -127,7 +132,8 @@ public class School {
             StudentManagement.logs.warn("Wrong data format!");
         }
     }
-//    -----------------------------------------------------------
+
+    //    -----------------------------------------------------------
     public void saveDataTxt(String filePath) {
         try (BufferedWriter br = new BufferedWriter(new FileWriter(filePath))) {
             for (Classroom cl : this.classrooms) {

@@ -85,9 +85,9 @@ public class StudentManagement extends Menu {
             boolean check = AppTools.show(school.getCourses(), "courses");
             if (!check) throw new Exception();
             String lCourse = school.getCourses().get(AppTools.getInt("Choose course") - 1);
-            Lecturer s = new Lecturer(lName, lCourse);
             ArrayList<Classroom> crs = school.getClassrooms();
             do {
+                Lecturer s = new Lecturer(lName, lCourse);
                 AppTools.show(school.getClassrooms(), "classrooms");
                 Classroom cr = crs.get(AppTools.getInt("Choose teacher class: ") - 1);
                 cr.addLec(s);
@@ -110,7 +110,7 @@ public class StudentManagement extends Menu {
                         System.out.println(Lecturer.displayTLine(r));
                         boolean check = school.checkLecturerTL(r, cr.getClassID());
                         if (!check)
-                            logs.warn("2 or more lecturers have the same timetable");
+                            logs.warn("2 or more lecturers have the same timetable, please re-type");
                     }
                 };
                 lecMenu.run();

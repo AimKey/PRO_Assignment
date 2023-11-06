@@ -124,7 +124,7 @@ public class Lecturer {
             int limit = School.numberOfSlots - 4;
             int length = School.weekdays.length - 1;
             for (int i = 0; i < 6; i++) {
-                if (tLineNumber >= limit) {
+                if (tLineNumber > limit) {
                     String time = School.weekdays[length] + " - Slot " + (tLineNumber - limit);
                     result.add(time);
                     break;
